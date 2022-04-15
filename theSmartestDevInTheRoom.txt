@@ -1,0 +1,11 @@
+The smartest developer in the room sits at his desk all day producing output. He writes several times as much code as the average, and his code is clear and elegant.
+
+The smartest person in the room is the one trying to make meetings work faster and more effectively, not the guy holding side conversations, and not the guy playing on his cell phone. The smartest guy in the room doesn’t come to some meetings because he knows they are a waste of time, and he always has a good excuse for not coming, involving getting the next release out the door.
+
+The smartest guy in the room is the one everyone else comes to when they can’t figure something out. They come to him because he is a good listener, who makes only occasional suggestions that all seem to provoke “aha” moments in the other workers.
+
+The smartest developer in the room is probably the guy who knows the most about the tools the team uses, because that makes him more productive. He’s the “language lawyer” you come to when you cannot understand why the compiler is giving you an error message on a line of code you’re just sure is correct.
+
+The smartest developer in the room is not the guy who comes up with brilliant solutions all by himself, because that doesn’t scale. He’s the guy who makes the whole team smarter, because a smart team can tackle bigger and more difficult challenges than one developer.
+
+Oh, and one other thing. The smartest guy in the room is not the guy who says he is, and not the guy who thinks he is.

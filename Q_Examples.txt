@@ -1,0 +1,58 @@
+-- Always returns triples and all literals are integers
+
+Q1)
+
+IMPORT "foo.ttl" AS A
+IMPORT "bar.ttl" AS B
+IMPORT "out.ttl" AS C
+
+FROM A INTO C
+GET sub pred obj .
+
+FROM B INTO C
+GET sub pred obj .
+
+Q2)
+
+IMPORT "foo.ttl" AS A
+IMPORT "out.ttl" AS B
+ 
+FROM A INTO B
+GET (sub) (pred) (obj) .
+WHERE {
+  sub = http://www.cw.org/#problem2
+  obj = true
+}
+
+Q3)
+
+IMPORT "foo.tll" AS A
+IMPORT "out.ttl" AS B
+
+FROM A INTO B
+GET (sub) (pred) (obj) .
+WHERE {
+  pred = http://www.cw.org/problem3/#predicate1 OR
+         http://www.cw.org/problem3/#predicate2 OR
+         http://www.cw.org/problem3/#predicate3
+}
+
+Q4)
+
+IMPORT "foo.ttl" AS A
+IMPORT "bar.ttl" AS B
+IMPORT "out.ttl" AS C
+
+FROM A INTO C
+GET (sub) (pred) (obj) .
+WHERE {
+  obj = sub IN B
+}
+
+FROM B INTO C
+GET (sub) (pred) (obj) .
+WHERE {
+  obj = sub IN A
+}
+
+
