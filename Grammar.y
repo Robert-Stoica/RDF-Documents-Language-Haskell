@@ -12,6 +12,7 @@ import Tokens
   IMPORT      { ImportToken _ }
   WHERE       { WhereToken _ }
   INTO        { IntoToken _ }
+  IN          { InToken _ }
   AS          { AsToken _ }
   FROM        { FromToken _ }
   WRITE       { WriteToken _ }
@@ -25,7 +26,6 @@ import Tokens
   subj        { SubjectToken _ }
   pred        { PredicateToken _ }
   obj         { ObjectToken _ }
-  NOTHING     { NothingToken _ }
   true        { TrueToken _ }
   false       { FalseToken _ }
   '['         { BracketLToken _ }
@@ -54,10 +54,10 @@ import Tokens
   
 %%
 
+import : IMPORT var AS var ';'                                      {}
+
 imports : import                                                    {}
         | imports import                                            {}
-
-import : IMPORT var AS var ';'                                      {}
 
 stmt : FROM listVar GET listTriple WHERE '{' exp '}' INTO var ';'   {}
 
@@ -66,6 +66,9 @@ prog : imports stmt                                                 {}
 triple : subj                                                       {}
        | pred                                                       {}
        | obj                                                        {}
+       | subj IN var                                                {}
+       | pred IN var                                                {}
+       | obj IN var                                                 {}
 
 listTriple : '[' triple ',' triple ',' triple ']'                   {}
 
@@ -77,8 +80,8 @@ compare : AND                                                       {}
         | OR                                                        {}
         | NOT                                                       {}
 
-listCompare : listVar compare listCompare
-            | listVar 
+listCompare : listVar compare listCompare                           {}
+            | listVar                                               {}
 
 operator : '<'                                                      {}
          | '>'                                                      {}
@@ -89,12 +92,16 @@ operator : '<'                                                      {}
          | '>='                                                     {}
          | '!='                                                     {}
 
+out : WRITE listVar out                                             {}
+    | WRITE listVar                                                 {}
+
 exp : 
     | var                                                           {}
     | int                                                           {}
     | listVar                                                       {}
     | listCompare                                                   {}
-    | triple
-    | '(' IF exp operator exp THEN WRITE listVar ELSE NOTHING ')'   {}
+    | triple                                                        {}
+    | '(' IF exp operator exp THEN out ELSE out ')'                 {}
+    | '(' IF exp operator exp THEN out ')'                          {}
 
 

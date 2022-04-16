@@ -18,8 +18,8 @@ FROM A GET [sub,pred,obj] WHERE {[http://www.cw.org/#problem2,*,true]} INTO B;
  
 Q3)
 
-IMPORT A AS A
-IMPORT B AS B
+IMPORT A AS A;
+IMPORT B AS B;
 
 FROM A GET [sub,pred,obj] WHERE {[sub,http://www.cw.org/problem3/#predicate1,obj]
                                  OR [sub,http://www.cw.org/problem3/#predicate2,obj]
@@ -27,16 +27,16 @@ FROM A GET [sub,pred,obj] WHERE {[sub,http://www.cw.org/problem3/#predicate1,obj
 
 Q4)
 
-IMPORT A AS A
-IMPORT B AS B
-IMPORT C AS C
+IMPORT A AS A;
+IMPORT B AS B;
+IMPORT C AS C;
 
 FROM A,B GET [sub,pred,obj] WHERE {A[sub,pred,sub IN B] AND B[sub,pred,sub IN A]} INTO C;
 
 Q5)
 
-IMPORT A AS A
-IMPORT B AS B
+IMPORT A AS A;
+IMPORT B AS B;
 
 FROM A GET [sub,pred,obj] WHERE {(IF obj < 0 OR obj > 99
                                   THEN WRITE [sub,<http://www.cw.org/problem5/#inRange>,false]
