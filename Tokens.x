@@ -46,7 +46,6 @@ tokens :-
   \<=         { \p s -> LessThanEqualToken p }
   \>=         { \p s -> MoreThanEqualToken p }
   \!=         { \p s -> NotEqualToken p }
-  
   $alpha [$alpha $digit \_ \']* { \p s -> VarToken p s }
 
 {

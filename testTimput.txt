@@ -1,0 +1,2 @@
+IMPORT A AS A;
+FROM A,B GET [sub,pred,obj] INTO C;
