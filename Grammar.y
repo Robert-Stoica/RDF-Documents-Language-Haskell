@@ -10,8 +10,8 @@ import Tokens
   int         { IntToken _ $$ }
   var         { VarToken _ $$ }
   IMPORT      { ImportToken _ }
-  WHERE       { WhereToken _ }
   INTO        { IntoToken _ }
+  WHERE       { WhereToken _ }
   IN          { InToken _ }
   AS          { AsToken _ }
   FROM        { FromToken _ }
@@ -55,14 +55,14 @@ stmts : stmt                                                                { [$
 
 stmt : exp ';'                                                              { $1 }
 
-exp : var                                                                   { Var $1 }
+exp : FROM '[' listElement ']' GET '[' listElement ']' exp                  { From $3 $7 $9 }
+    | var                                                                   { Var $1 }
     | int                                                                   { AssignInt $1 }
-    | WHERE '{' '[' listElement ']' '}'                                     { Where $4 }
+    | WHERE '{' '[' listElement ']' '}' exp                                 { Where $4 $7 }
+    | INTO exp                                                              { Into $2 }
     | IN exp                                                                { In $2 }
     | AS exp                                                                { As $2 } 
     | IMPORT exp AS exp                                                     { Import $2 $4 }
-    | FROM '[' listVar ']' GET '[' listElement ']'                          { From $3 $7 }
-    | INTO exp                                                              { Into $2 } 
     | IF exp THEN exp ELSE exp                                              { IfThenElse $2 $4 $6 }
     | int '<' int                                                           { LessThan $1 $3 }
     | int '>' int                                                           { MoreThan $1 $3 }
@@ -71,9 +71,6 @@ exp : var                                                                   { Va
     | int '<=' int                                                          { LessThanEqual $1 $3 }
     | int '>=' int                                                          { MoreThanEqual $1 $3 }
     | '(' exp ')'                                                           { $2 }
-
-listVar : var                                                               { [$1] }
-        | var ',' listVar                                                   { $1 : $3 }
 
 listElement : listElementContent                                            { [$1] }
             | listElementContent ',' listElement                            { $1 : $3 }
@@ -84,6 +81,8 @@ listElementContent : subj                                                   { Su
                    | subj IN exp                                            { SubjectIn $3}
                    | pred IN exp                                            { PredicateIn $3 }
                    | obj IN exp                                             { ObjectIn $3}
+                   | true                                                   { TrueElem }
+                   | false                                                  { FalseElem }
                    | exp                                                    { $1 }
 
 {
@@ -94,8 +93,8 @@ parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 data Expr = Var String
           | AssignInt Int
           | Import Expr Expr
-          | From [String] [Expr]
-          | Where [Expr]
+          | From [Expr] [Expr] Expr 
+          | Where [Expr] Expr
           | Into Expr
           | In Expr
           | As Expr
@@ -112,5 +111,7 @@ data Expr = Var String
           | PredicateIn Expr
           | SubjectIn Expr
           | ObjectIn Expr
+          | FalseElem
+          | TrueElem
   deriving (Eq,Show)
 }

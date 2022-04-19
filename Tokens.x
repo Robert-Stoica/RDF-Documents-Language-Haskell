@@ -6,15 +6,18 @@ module Tokens where
 
 $digit = 0-9
 $alpha = [a-zA-Z]
+$special = [\:\_\'\.\$\|\*\?\#\~\{\}\^\/]
 
 tokens :-
   $white+     ;
   "--".*      ;
+  true        { \p s -> TrueToken p }
+  false       { \p s -> FalseToken p }
   $digit+     { \p s -> IntToken p (read s) }
   IMPORT      { \p s -> ImportToken p }
   WRITE       { \p s -> WriteToken p }
-  WHERE       { \p s -> WhereToken p }
   INTO        { \p s -> IntoToken p }
+  WHERE       { \p s -> WhereToken p }
   IN          { \p s -> InToken p }
   AS          { \p s -> AsToken p }
   GET         { \p s -> GetToken p }
@@ -25,8 +28,6 @@ tokens :-
   IF          { \p s -> IfToken p }
   THEN        { \p s -> ThenToken p }
   ELSE        { \p s -> ElseToken p }
-  true        { \p s -> TrueToken p }
-  false       { \p s -> FalseToken p }
   pred        { \p s -> PredicateToken p }
   obj         { \p s -> ObjectToken p }
   AND         { \p s -> AndToken p }
@@ -46,7 +47,7 @@ tokens :-
   \<=         { \p s -> LessThanEqualToken p }
   \>=         { \p s -> MoreThanEqualToken p }
   \!=         { \p s -> NotEqualToken p }
-  $alpha [$alpha $digit \_ \']* { \p s -> VarToken p s }
+  $alpha [$alpha $digit $special]* { \p s -> VarToken p s }
 
 {
 

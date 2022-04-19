@@ -1,2 +1,4 @@
-IMPORT A AS B;
-WHERE {[A,A,4,subj,obj IN A]};
+IMPORT A AS A;
+IMPORT B AS B;
+
+FROM [A] GET [sub,pred,obj] WHERE {[http://www.cw.org/#problem2,pred,true]} INTO B;

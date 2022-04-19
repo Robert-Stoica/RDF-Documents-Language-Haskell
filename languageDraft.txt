@@ -7,21 +7,21 @@ IMPORT A AS A;
 IMPORT B AS B;
 IMPORT C AS C;
 
-FROM A,B GET [sub,pred,obj] INTO C;
+FROM [A,B] GET [sub,pred,obj] INTO C;
 
 Q2)
 
 IMPORT A AS A;
 IMPORT B AS B;
 
-FROM A GET [sub,pred,obj] WHERE {[http://www.cw.org/#problem2,pred,true]} INTO B;
+FROM [A] GET [sub,pred,obj] WHERE {[http://www.cw.org/#problem2,pred,true]} INTO B;
  
 Q3)
 
 IMPORT A AS A;
 IMPORT B AS B;
 
-FROM A GET [sub,pred,obj] WHERE {[sub,http://www.cw.org/problem3/#predicate1,obj]
+FROM [A] GET [sub,pred,obj] WHERE {[sub,http://www.cw.org/problem3/#predicate1,obj]
               OR [sub,http://www.cw.org/problem3/#predicate2,obj]
               OR [sub,http://www.cw.org/problem3/#predicate3,obj]} INTO B;
 
@@ -31,14 +31,14 @@ IMPORT A AS A;
 IMPORT B AS B;
 IMPORT C AS C;
 
-FROM A,B GET [sub,pred,obj] WHERE {A[sub,pred,obj IN B] AND B[sub,pred,obj IN A]} INTO C;
+FROM [A,B] GET [sub,pred,obj] WHERE {A[sub,pred,obj IN B] AND B[sub,pred,obj IN A]} INTO C;
 
 Q5)
 
 IMPORT A AS A;
 IMPORT B AS B;
 
-FROM A GET [sub,pred,obj] WHERE {
+FROM [A] GET [sub,pred,obj] WHERE {
 IF (obj < 0 OR obj > 99) 
 THEN WRITE [sub,<http://www.cw.org/problem5/#inRange>,false])
 ELSE
