@@ -57,11 +57,11 @@ stmt : exp ';'                                                              { $1
 
 exp : var                                                                   { Var $1 }
     | int                                                                   { AssignInt $1 }
-    | WHERE '{' listElement '}'                                             { Where $3 }
+    | WHERE '{' '[' listElement ']' '}'                                     { Where $4 }
     | IN exp                                                                { In $2 }
     | AS exp                                                                { As $2 } 
     | IMPORT exp AS exp                                                     { Import $2 $4 }
-    | FROM listVar GET listElement                                          { From $2 }
+    | FROM '[' listVar ']' GET '[' listElement ']'                          { From $3 $7 }
     | INTO exp                                                              { Into $2 } 
     | IF exp THEN exp ELSE exp                                              { IfThenElse $2 $4 $6 }
     | int '<' int                                                           { LessThan $1 $3 }
@@ -75,13 +75,8 @@ exp : var                                                                   { Va
 listVar : var                                                               { [$1] }
         | var ',' listVar                                                   { $1 : $3 }
 
-listElement : '[' listElementContent ']'                                    { [$2] }
-            | '[' listElementContent separator listElement ']'              { $2 : $4 }
-            | exp '[' listElementContent separator listElement ']'          { $3 : $5 } -- for when getting triples from a certain file, not sure if it works
-
-separator : AND                                                             { And }
-          | OR                                                              { Or }
-          | ','                                                             { Comma }
+listElement : listElementContent                                            { [$1] }
+            | listElementContent ',' listElement                            { $1 : $3 }
 
 listElementContent : subj                                                   { Subject }
                    | pred                                                   { Predicate }
@@ -99,7 +94,7 @@ parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 data Expr = Var String
           | AssignInt Int
           | Import Expr Expr
-          | From [String]
+          | From [String] [Expr]
           | Where [Expr]
           | Into Expr
           | In Expr
@@ -118,9 +113,4 @@ data Expr = Var String
           | SubjectIn Expr
           | ObjectIn Expr
   deriving (Eq,Show)
-
-data Separator = And
-               | Or
-               | Comma
-  deriving (Eq, Show)
 }
