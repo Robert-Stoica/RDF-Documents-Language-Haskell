@@ -1,4 +1,7 @@
 IMPORT A AS A;
 IMPORT B AS B;
+IMPORT C AS C;
 
-FROM [A] GET [sub,pred,obj] WHERE {[http://www.cw.org/#problem2,pred,true]} INTO B;
+FROM [A,B] GET [sub,pred,obj] WHERE {[subj IN A,pred IN A,obj IN B] AND [subj IN B,pred IN B,obj IN A]} INTO C;
+
+

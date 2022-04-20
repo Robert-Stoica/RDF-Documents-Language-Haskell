@@ -13,3 +13,6 @@ happyComp: Grammar.y Grammar.hs
 
 mainComp: main.hs
 	stack ghc main.hs
+
+clean: 
+	rm Grammar.info Tokens.hi Tokens.o Grammar.o main.o main.hi .*.swp

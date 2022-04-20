@@ -31,7 +31,7 @@ IMPORT A AS A;
 IMPORT B AS B;
 IMPORT C AS C;
 
-FROM [A,B] GET [sub,pred,obj] WHERE {A[sub,pred,obj IN B] AND B[sub,pred,obj IN A]} INTO C;
+FROM [A,B] GET [sub,pred,obj] WHERE {[subj IN A,pred IN A,obj IN B] AND [subj IN B,pred IN B,obj IN A]} INTO C;
 
 Q5)
 

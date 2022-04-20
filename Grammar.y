@@ -58,7 +58,7 @@ stmt : exp ';'                                                              { $1
 exp : FROM '[' listElement ']' GET '[' listElement ']' exp                  { From $3 $7 $9 }
     | var                                                                   { Var $1 }
     | int                                                                   { AssignInt $1 }
-    | WHERE '{' '[' listElement ']' '}' exp                                 { Where $4 $7 }
+    | WHERE '{' compareLists '}' exp                                        { Where $3 $5 }
     | INTO exp                                                              { Into $2 }
     | IN exp                                                                { In $2 }
     | AS exp                                                                { As $2 } 
@@ -85,6 +85,12 @@ listElementContent : subj                                                   { Su
                    | false                                                  { FalseElem }
                    | exp                                                    { $1 }
 
+compareLists : '[' listElement ']'                                          { [$2] }
+             | '[' listElement ']' comparison compareLists                  { $2 : $5 }
+
+comparison : OR                                                             { Or }
+           | AND                                                            { And }
+
 {
 parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error - empty token list." 
@@ -94,7 +100,7 @@ data Expr = Var String
           | AssignInt Int
           | Import Expr Expr
           | From [Expr] [Expr] Expr 
-          | Where [Expr] Expr
+          | Where [[Expr]] Expr
           | Into Expr
           | In Expr
           | As Expr
@@ -113,5 +119,7 @@ data Expr = Var String
           | ObjectIn Expr
           | FalseElem
           | TrueElem
+          | And
+          | Or
   deriving (Eq,Show)
 }
