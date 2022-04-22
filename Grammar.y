@@ -121,5 +121,6 @@ data Expr = Var String
           | TrueElem
           | And
           | Or
+		  | FileLines [String]
   deriving (Eq,Show)
 }

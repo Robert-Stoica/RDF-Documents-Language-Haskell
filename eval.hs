@@ -7,7 +7,7 @@ import System.IO
 readTTL :: FilePath -> IO [String]
 readTTL file = readFile file >>= \content -> return (lines content)
 
-data Frame = AddVarFrame String | InsertFrame | SelectFrame [Int]
+data Frame = AddVarFrame String | InsertFrame | SelectFrame [Int] | AsFrame String
       deriving (Show, Eq)
 
 type Environment = [ (String, Expr)]
@@ -46,7 +46,9 @@ eval1 (x, env, []) | isValue x = return (x, env, [])
 
 
 --import As
---eval1 (Import (Var var1) (Var var2), env, k) = Nothing
+eval1 (Import (Var var1) (Var var2), env, k) = readTTL (var1++".ttl") >>= \content -> return (As $ FileLines content, env, AsFrame var2:k)
+
+
 
 
 

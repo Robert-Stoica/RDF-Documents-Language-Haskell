@@ -11,260 +11,9 @@ module Tokens where
 #endif
 #if __GLASGOW_HASKELL__ >= 503
 import Data.Array
-import Data.Array.Base (unsafeAt)
 #else
 import Array
 #endif
-{-# LINE 1 "templates/wrappers.hs" #-}
-{-# LINE 1 "templates/wrappers.hs" #-}
-{-# LINE 1 "<built-in>" #-}
-{-# LINE 1 "<command-line>" #-}
-{-# LINE 9 "<command-line>" #-}
-# 1 "/usr/include/stdc-predef.h" 1 3 4
-
-# 17 "/usr/include/stdc-predef.h" 3 4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 9 "<command-line>" #-}
-{-# LINE 1 "/usr/lib/ghc/include/ghcversion.h" #-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 9 "<command-line>" #-}
-{-# LINE 1 "/tmp/ghc5f56_0/ghc_2.h" #-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 9 "<command-line>" #-}
 {-# LINE 1 "templates/wrappers.hs" #-}
 -- -----------------------------------------------------------------------------
 -- Alex wrapper code.
@@ -276,33 +25,52 @@ import Array
 
 
 
-
 import Data.Word (Word8)
-{-# LINE 28 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import Data.Char (ord)
 import qualified Data.Bits
 
 -- | Encode a Haskell String to a list of Word8 values, in UTF8 format.
 utf8Encode :: Char -> [Word8]
-utf8Encode = map fromIntegral . go . ord
+utf8Encode = uncurry (:) . utf8Encode'
+
+utf8Encode' :: Char -> (Word8, [Word8])
+utf8Encode' c = case go (ord c) of
+                  (x, xs) -> (fromIntegral x, map fromIntegral xs)
  where
   go oc
-   | oc <= 0x7f       = [oc]
+   | oc <= 0x7f       = ( oc
+                        , [
+                        ])
 
-   | oc <= 0x7ff      = [ 0xc0 + (oc `Data.Bits.shiftR` 6)
+   | oc <= 0x7ff      = ( 0xc0 + (oc `Data.Bits.shiftR` 6)
+                        , [0x80 + oc Data.Bits..&. 0x3f
+                        ])
+
+   | oc <= 0xffff     = ( 0xe0 + (oc `Data.Bits.shiftR` 12)
+                        , [0x80 + ((oc `Data.Bits.shiftR` 6) Data.Bits..&. 0x3f)
                         , 0x80 + oc Data.Bits..&. 0x3f
-                        ]
-
-   | oc <= 0xffff     = [ 0xe0 + (oc `Data.Bits.shiftR` 12)
+                        ])
+   | otherwise        = ( 0xf0 + (oc `Data.Bits.shiftR` 18)
+                        , [0x80 + ((oc `Data.Bits.shiftR` 12) Data.Bits..&. 0x3f)
                         , 0x80 + ((oc `Data.Bits.shiftR` 6) Data.Bits..&. 0x3f)
                         , 0x80 + oc Data.Bits..&. 0x3f
-                        ]
-   | otherwise        = [ 0xf0 + (oc `Data.Bits.shiftR` 18)
-                        , 0x80 + ((oc `Data.Bits.shiftR` 12) Data.Bits..&. 0x3f)
-                        , 0x80 + ((oc `Data.Bits.shiftR` 6) Data.Bits..&. 0x3f)
-                        , 0x80 + oc Data.Bits..&. 0x3f
-                        ]
+                        ])
 
 
 
@@ -327,15 +95,68 @@ alexGetByte :: AlexInput -> Maybe (Byte,AlexInput)
 alexGetByte (p,c,(b:bs),s) = Just (b,(p,c,bs,s))
 alexGetByte (_,_,[],[]) = Nothing
 alexGetByte (p,_,[],(c:s))  = let p' = alexMove p c
-                                  (b:bs) = utf8Encode c
-                              in p' `seq`  Just (b, (p', c, bs, s))
+                              in case utf8Encode' c of
+                                   (b, bs) -> p' `seq`  Just (b, (p', c, bs, s))
 
 
-{-# LINE 102 "templates/wrappers.hs" #-}
 
-{-# LINE 120 "templates/wrappers.hs" #-}
 
-{-# LINE 138 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- -----------------------------------------------------------------------------
 -- Token positions
@@ -355,35 +176,224 @@ alexStartPos :: AlexPosn
 alexStartPos = AlexPn 0 1 1
 
 alexMove :: AlexPosn -> Char -> AlexPosn
-alexMove (AlexPn a l c) '\t' = AlexPn (a+1)  l     (((c+alex_tab_size-1) `div` alex_tab_size)*alex_tab_size+1)
+alexMove (AlexPn a l c) '\t' = AlexPn (a+1)  l     (c+alex_tab_size-((c-1) `mod` alex_tab_size))
 alexMove (AlexPn a l _) '\n' = AlexPn (a+1) (l+1)   1
 alexMove (AlexPn a l c) _    = AlexPn (a+1)  l     (c+1)
 
 
 -- -----------------------------------------------------------------------------
--- Default monad
-
-{-# LINE 274 "templates/wrappers.hs" #-}
+-- Monad (default and with ByteString input)
 
 
--- -----------------------------------------------------------------------------
--- Monad (with ByteString input)
 
-{-# LINE 379 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- -----------------------------------------------------------------------------
 -- Basic wrapper
 
-{-# LINE 406 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- -----------------------------------------------------------------------------
 -- Basic wrapper, ByteString version
 
-{-# LINE 425 "templates/wrappers.hs" #-}
 
-{-# LINE 440 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- -----------------------------------------------------------------------------
@@ -406,13 +416,36 @@ alexScanTokens str0 = go (alexStartPos,'\n',[],str0)
 -- -----------------------------------------------------------------------------
 -- Posn wrapper, ByteString version
 
-{-# LINE 473 "templates/wrappers.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- -----------------------------------------------------------------------------
 -- GScan wrapper
 
 -- For compatibility with previous versions of Alex, and because we can.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 alex_tab_size :: Int
 alex_tab_size = 8
@@ -14750,256 +14783,6 @@ alex_action_36 =  \p s -> MoreThanEqualToken p
 alex_action_37 =  \p s -> NotEqualToken p 
 alex_action_38 =  \p s -> VarToken p s 
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
-{-# LINE 1 "templates/GenericTemplate.hs" #-}
-{-# LINE 1 "<built-in>" #-}
-{-# LINE 1 "<command-line>" #-}
-{-# LINE 8 "<command-line>" #-}
-# 1 "/usr/include/stdc-predef.h" 1 3 4
-
-# 17 "/usr/include/stdc-predef.h" 3 4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 8 "<command-line>" #-}
-{-# LINE 1 "/usr/lib/ghc/include/ghcversion.h" #-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 8 "<command-line>" #-}
-{-# LINE 1 "/tmp/ghc8a9b_0/ghc_2.h" #-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{-# LINE 8 "<command-line>" #-}
-{-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- -----------------------------------------------------------------------------
 -- ALEX TEMPLATE
 --
@@ -15009,19 +14792,110 @@ alex_action_38 =  \p s -> VarToken p s
 -- -----------------------------------------------------------------------------
 -- INTERNALS and main scanner engine
 
-{-# LINE 21 "templates/GenericTemplate.hs" #-}
 
-{-# LINE 51 "templates/GenericTemplate.hs" #-}
 
-{-# LINE 72 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 alexIndexInt16OffAddr arr off = arr ! off
 
 
-{-# LINE 93 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 alexIndexInt32OffAddr arr off = arr ! off
 
 
-{-# LINE 105 "templates/GenericTemplate.hs" #-}
+
+
+
+
+
+
+
+
+
 quickIndex arr i = arr ! i
 
 
@@ -15153,3 +15027,4 @@ alexRightContext (sc) user__ _ _ input__ =
         -- TODO: there's no need to find the longest
         -- match when checking the right context, just
         -- the first match will do.
+
